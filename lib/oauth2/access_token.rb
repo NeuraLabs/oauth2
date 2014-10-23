@@ -89,6 +89,19 @@ module OAuth2
       new_token
     end
 
+    # Refreshes the current Access Token
+    #
+    # @return [AccessToken] a new AccessToken
+    # @note options should be carried over to the new AccessToken
+    def raw_refresh!(params = {})
+      fail('A refresh_token is not available') unless refresh_token
+      params.merge!(:refresh_token  => refresh_token)
+      new_token = @client.get_token(params)
+      new_token.options = options
+      new_token.refresh_token = refresh_token unless new_token.refresh_token
+      new_token
+    end
+
     # Convert AccessToken to a hash which can be used to rebuild itself with AccessToken.from_hash
     #
     # @return [Hash] a hash of AccessToken property values
